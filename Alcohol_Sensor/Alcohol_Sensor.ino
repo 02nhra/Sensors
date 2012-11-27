@@ -11,7 +11,7 @@
  I've seen an average value range from 300-500 just sitting there. And a jump up to 600 or 700 after
  drinking a nice red Chianti with a side of fava beans.
  
- To get this code to work, attached the following pins
+ To get this code to work, attach the following pins
  A1 on sensor to VIN on Arduino
  H1 on sensor to VIN on Arduino
  B1 on sensor to A0 on Arduino and 10K to GND

@@ -9,7 +9,7 @@
  My flex sensor reads about 315 when straight and 130 when curled. Adjust the max and min flex variable
  for your specific sensor. 
  
- To get this code to work, attached the following pins
+ To get this code to work, attach the following pins
  Pin 1 (doesn't matter which one) of sensor to 5V on Arduino
  Pin 2 of sensor to A4 and a 10K to GND
  

@@ -4,48 +4,52 @@
  Date: November 26, 2012
  This code is public domain but you buy me a beer if you use this and we meet someday (Beerware license).
 
- My flex sensor reads about 315 when straight and 130 when curled. Adjust the max and min flex variable
- for your specific sensor. 
+ Tilt sensor information: http://www.sparkfun.com/products/10289
  
- To get this code to work, attached the following pins
- Pin 1 (doesn't matter which one) of sensor to 5V on Arduino
- Pin 2 of sensor to A4 and a 10K to GND
+ The tile sensor has a ball bearing side and will connect the pins together when the sensor is tilted towards
+ the earth. It doesn't work great all the time. Try holding the sensor sideways and gently tilt it 45 degrees
+ towards the earth then 45 away from it.
  
- Green LEN connected from Pin 11 on Adruino to GND.
+ To get this code to work, attach the following pins
+ Pin 1 (doesn't matter which one) of tilt sensor to Pin 2 on Arduino
+ Pin 2 of sensor to GND
+ 
+ Pin 1 (doesn't matter which one) of buzzer to Pin 7 on Arduino
+ Pin 2 of buzzer to GND
  
  */
 
-int maxFlex = 315;
-int minFlex = 130;
+int tilty = 2; //One pin of tilt sensor is connected to pin 2 on Arduino
+int bzzz = 7; //One pin of buzzer is connected to pin 7.
 
-int statusLED = 11; //Green LED on pin 11 to indicate rough amount of flex
-int flexSensor = A4; //The flex sensor forms a voltage divider
+int frequency = 1000; //This variable keeps track of the frequency of noise produced. It changes over time.
 
 void setup()
 {  
   Serial.begin(9600); //Start the debug terminal at 9600 bps
 
-  pinMode(statusLED, OUTPUT); //The green LED is an output
-  digitalWrite(statusLED, LOW); //Turn off the LED
-
-  pinMode(flexSensor, INPUT); //Set analog pin to input to read the sensor
+  pinMode(tilty, INPUT_PULLUP); //Tily sensor is an input and uses the internal pull up resistor
+  pinMode(bzzz, OUTPUT); //A buzzer makes noise - it's an output
 }
 
 void loop()
 {
-  int sensorReading = analogRead(flexSensor);
+  if(digitalRead(tilty) == LOW)
+  {
+    //Make some noise!
+    tone(bzzz, frequency);
+    
+    Serial.println("I'm upside down!");
+    
+    frequency += 25; //Increment by 25 each time
+    if(frequency > 3000) frequency = 1000; //Reset to 1,000Hz once we get over 10,000Hz
+  }
+  else
+  {
+    noTone(bzzz); //Stop the noise!
 
-  Serial.print("Flex sensor reading: ");
-  Serial.print(sensorReading);
-
-  Serial.println(); //Wrap the text so that it's easier to read
+    Serial.println("I'm fine.");
+  }
   
-  //Now control the LED based on the amount of flex
-  if (sensorReading < minFlex) minFlex = sensorReading; //Correct the minimum value down if we get a smaller reading
-  if (sensorReading > maxFlex) maxFlex = sensorReading; //Correct the max value up if we get a larger reading
-  
-  int ledAmount = map(sensorReading, minFlex, maxFlex, 0, 255); //Map the sensor reading to what we can display on the LED
-  analogWrite(statusLED, ledAmount); //Write this newly mapped value out to the LED
-  
-  delay(10); //We don't want to print too much too quickly
+  delay(10);
 }
